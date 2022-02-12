@@ -25,7 +25,7 @@ services:
       - service-article
 
   mongodb:
-    image: mongo:4.4
+    image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: article
       MONGO_INITDB_ROOT_PASSWORD: article
