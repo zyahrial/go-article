@@ -1,0 +1,6 @@
+.idea/
+go.mod
+go.sum
+config.yaml
+*.exe
+pkg

@@ -1,0 +1,50 @@
+version: "3.3"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: services-article
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app:/app
+    networks:
+      - service-article
+
+  #redis    
+  redis:
+    build:
+      context: .
+      dockerfile: ./docker/images/redis/Dockerfile
+    volumes:
+      - redis:/data
+    depends_on:
+      - app
+    networks:
+      - service-article
+
+  mongodb:
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: article
+      MONGO_INITDB_ROOT_PASSWORD: article
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data/db
+    depends_on:
+      - app
+    networks:
+      - service-article
+
+volumes:
+  app:
+    driver: "local"
+  redis:
+    driver: "local"
+  mongodb:
+    driver: "local"
+
+networks:
+  service-article:
