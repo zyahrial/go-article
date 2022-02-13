@@ -1,16 +1,16 @@
 version: "3.3"
 services:
-  app:
-    build:
-      context: .
-      dockerfile: dev.Dockerfile
-    container_name: services-article
-    ports:
-      - 8080:8080
-    volumes:
-      - ./app:/app
-    networks:
-      - service-article
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: dev.Dockerfile
+  #   container_name: services-article
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - ./app:/app
+  #   networks:
+  #     - service-article
 
   #redis    
   redis:
@@ -19,8 +19,8 @@ services:
       dockerfile: ./docker/images/redis/Dockerfile
     volumes:
       - redis:/data
-    depends_on:
-      - app
+    # depends_on:
+    #   - app
     networks:
       - service-article
 
@@ -32,9 +32,25 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./data:/data/db
-    depends_on:
-      - app
+      - mongo-data:/data/db
+    # depends_on:
+    #   - app
+    networks:
+      - service-article
+
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "rmq"
+      RABBITMQ_DEFAULT_PASS: "rmq"
+    volumes:
+      - rabbit-data:/data/rmq
     networks:
       - service-article
 
@@ -43,8 +59,8 @@ volumes:
     driver: "local"
   redis:
     driver: "local"
-  mongodb:
-    driver: "local"
+  mongo-data:
+  rabbit-data:
 
 networks:
   service-article:
