@@ -66,13 +66,12 @@ func Consume(c *gin.Context){
 			save := models.NewArticle(id, author, tittle, body)
 			succ := mgm.Coll(save).Create(save)
             fmt.Println("success add data to query DB:", succ)
+			defer connectRabbitMQ.Close()
 			defer channelRabbitMQ.Close()
 		}
     }()
     <-forever
 
-	defer connectRabbitMQ.Close()
-    defer channelRabbitMQ.Close()
 	c.JSON(http.StatusOK, gin.H{
 		"status": "message success consumed",
 	})

@@ -13,7 +13,7 @@ import (
 )
 
 func Route() {
-	router := gin.Default()
+	router := gin.New()
 	api := router.Group("query")
 
 	api.GET("listen/message", message.Consume)

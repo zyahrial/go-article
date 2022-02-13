@@ -25,7 +25,7 @@ func Publish(data []byte, queueName string) string{
     }
     defer channelRabbitMQ.Close()
 
-    q, _ := channelRabbitMQ.QueueDeclare(
+    q, err := channelRabbitMQ.QueueDeclare(
 		queueName, // name
 		true,    // durable
 		false,   // delete when usused
@@ -34,10 +34,13 @@ func Publish(data []byte, queueName string) string{
 		nil,     // arguments
 	)
 
-    fmt.Println(string(data))
+    // Handle any errors if we were unable to create the queue
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	e := channelRabbitMQ.Publish(
-		"amq.topic",     // exchange
+		"",     // exchange
 		q.Name, // routing key
 		false,  // mandatory
 		false,  // immediate

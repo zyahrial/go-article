@@ -30,7 +30,6 @@ func Add(c *gin.Context) {
     now := time.Now().In(loc)
 	
 	addArticle := models.Article{Author: article.Author, Tittle: article.Tittle, Body: article.Body, Created_at: now}
-	fmt.Println(addArticle)
 
 	if err := database.DBCon.Create(&addArticle).Error; err != nil {
 		fmt.Printf("error add : %3v \n", err)
