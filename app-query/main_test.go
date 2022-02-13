@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"io/ioutil"
+	"github.com/kamva/mgm/v3"
+	"fmt"
+	models "query/article/models"
+
 )
 
 func article(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +18,12 @@ func article(w http.ResponseWriter, r *http.Request) {
 }
 
 func Test_article(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/v1/article", nil)
+
+	a := models.Article{}
+	coll := mgm.Coll(&a)
+	fmt.Println(coll)
+
+	req := httptest.NewRequest(http.MethodGet, "/query/article", nil)
 	res := httptest.NewRecorder()
  
 	article(res, req)

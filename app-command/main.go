@@ -5,13 +5,11 @@ import (
     controller "command/article/controller"
     "command/article/db/database"
     "command/article/db/migrations"
+    unitTest "github.com/Valiben/gin_unit_test"
 
     _ "github.com/jinzhu/gorm/dialects/postgres"
     "time"
-    "testing"
     "net/http"
-    "net/http/httptest"
-    "io/ioutil"
 	  "fmt"
 )
 
@@ -25,7 +23,7 @@ func main() {
 
 func engine() *gin.Engine {
 
-	fmt.Printf("Started at : %3v \n", time.Now())
+	  fmt.Printf("Started at : %3v \n", time.Now())
 
     database.InitDB()
 
@@ -34,7 +32,7 @@ func engine() *gin.Engine {
 
     gin.SetMode(gin.ReleaseMode)
     	
-	  api := gin.New()
+	  api := gin.Default()
     api.POST("command/article", controller.Add)
 
     api.GET("/health-check", func(c *gin.Context) {
@@ -42,34 +40,6 @@ func engine() *gin.Engine {
         "data": "OK",
       })
     })
-
+  unitTest.SetRouter(api)
 	return api
 }
-  
-  func article(w http.ResponseWriter, r *http.Request) {
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte("health"))
-  }
-  
-  func Test_article(t *testing.T) {
-    req := httptest.NewRequest(http.MethodGet, "command/article", nil)
-    res := httptest.NewRecorder()
-   
-    article(res, req)
-      
-    result := res.Result()
-   
-    body, err := ioutil.ReadAll(result.Body)
-    if err != nil {
-      t.Fatal(err)
-    }
-    result.Body.Close()
-   
-    if http.StatusOK != result.StatusCode  {
-      t.Error("expected", http.StatusOK, "got", result.StatusCode)
-    }
-  
-    if "health" != string(body) {
-      t.Error("expected health got", string(body))
-    }
-  }

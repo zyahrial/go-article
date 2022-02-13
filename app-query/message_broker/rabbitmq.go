@@ -43,7 +43,6 @@ func Consume(c *gin.Context){
 		fmt.Println(err)
 	}
 
-    fmt.Println("Successfully connected to RabbitMQ")
     fmt.Println("Waiting for messages")
 
     forever := make(chan bool)
@@ -64,8 +63,11 @@ func Consume(c *gin.Context){
 			body := m.Body
 
 			save := models.NewArticle(id, author, tittle, body)
-			succ := mgm.Coll(save).Create(save)
-            fmt.Println("success add data to query DB:", succ)
+			err := mgm.Coll(save).Create(save)
+			if err != nil{
+				fmt.Println(err)
+			}
+            fmt.Println("success add data to query DB:")
 			defer connectRabbitMQ.Close()
 			defer channelRabbitMQ.Close()
 		}

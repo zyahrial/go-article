@@ -1,16 +1,30 @@
 version: "3.3"
 services:
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: dev.Dockerfile
-  #   container_name: services-article
-  #   ports:
-  #     - 8080:8080
-  #   volumes:
-  #     - ./app:/app
-  #   networks:
-  #     - service-article
+  app-command:
+    build:
+      context: .
+      dockerfile: ./docker/images/app-command/dev.Dockerfile
+    container_name: services-command-article
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app-command:/app-command
+    networks:
+      - service-article
+
+  app-query:
+    build:
+      context: .
+      dockerfile: ./docker/images/app-query/dev.Dockerfile
+    container_name: services-query-article
+    ports:
+      - 8081:8081
+    healthcheck:
+      test: ["CMD", "bash", "-c", "curl localhost:8080/query/health-check"]
+    volumes:
+      - ./app-query:/app-query
+    networks:
+      - service-article
 
   #redis    
   redis:
@@ -24,19 +38,32 @@ services:
     networks:
       - service-article
 
-  # mongodb:
-  #   image: mongo:latest
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: article
-  #     MONGO_INITDB_ROOT_PASSWORD: article
-  #   ports:
-  #     - 27017:27017
-  #   volumes:
-  #     - mongo-data:/data/db
-  #   # depends_on:
-  #   #   - app
-  #   networks:
-  #     - service-article
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: article
+      MONGO_INITDB_ROOT_PASSWORD: article
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - service-article
+
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+        - postgres-data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - service-article
+    restart: unless-stopped
 
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
@@ -55,12 +82,15 @@ services:
       - service-article
 
 volumes:
-  app:
+  app-command:
+    driver: "local"
+  app-query:
     driver: "local"
   redis:
     driver: "local"
   mongo-data:
   rabbit-data:
+  postgres-data:
 
 networks:
   service-article:

@@ -1,13 +1,41 @@
 // main_test.go
 package main_test
 
-// import (
-// 	// "khaerus-mini-wallet/db/database"
-// 	// "khaerus-mini-wallet/db/migrations"
-// 	"khaerus-mini-wallet/controllers"
-//     "github.com/stretchr/testify/require"
-//     "fmt"
-//     "testing"
-// )
+import (
+    "testing"
+	"net/http"
+	"net/http/httptest"
+	"io/ioutil"
+	"command/article/db/database"
 
-// const isBase64 = "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$"
+)
+
+func article(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("health"))
+}
+
+func Test_article(t *testing.T) {
+	database.InitDB()
+
+	req := httptest.NewRequest(http.MethodGet, "/command/article", nil)
+	res := httptest.NewRecorder()
+ 
+	article(res, req)
+  
+	result := res.Result()
+ 
+	body, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result.Body.Close()
+ 
+	if http.StatusOK != result.StatusCode  {
+		t.Error("expected", http.StatusOK, "got", result.StatusCode)
+	}
+
+	if "health" != string(body) {
+		t.Error("expected health got", string(body))
+	}
+}

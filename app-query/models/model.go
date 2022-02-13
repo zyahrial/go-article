@@ -17,7 +17,7 @@ func init() {
 		Password: "article",
 	}
 	
-	err := mgm.SetDefaultConfig(nil,"admin", options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/" + "admin" + "?authSource=admin").SetAuth(credential))
+	err := mgm.SetDefaultConfig(nil,"admin", options.Client().ApplyURI("mongodb://" + "mongodb:27017" + "/" + "admin" + "?authSource=admin").SetAuth(credential))
 
 	if err != nil {
 		fmt.Printf("failed connection")

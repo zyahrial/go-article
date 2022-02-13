@@ -21,7 +21,7 @@ func InitDB() {
 	// }), &gorm.Config{})
 
 	connectionString := "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s"
-	connectionString = fmt.Sprintf(connectionString, "localhost", "5432", "postgres", "postgres", "postgres", "disable")
+	connectionString = fmt.Sprintf(connectionString, "postgres", "5432", "postgres", "postgres", "postgres", "disable")
     DBCon, err = gorm.Open("postgres", connectionString)
     if err != nil {
         log.Fatal(err)
