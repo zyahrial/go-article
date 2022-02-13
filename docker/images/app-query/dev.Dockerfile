@@ -10,4 +10,4 @@ WORKDIR /app-query
 RUN curl -fLo install.sh https://raw.githubusercontent.com/cosmtrek/air/master/install.sh \
     && chmod +x install.sh && sh install.sh && cp ./bin/air /bin/air
 
-CMD air && curl http://localhost:8080/query/listen/messag
+CMD air

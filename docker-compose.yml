@@ -6,7 +6,7 @@ services:
       dockerfile: ./docker/images/app-command/dev.Dockerfile
     container_name: services-command-article
     ports:
-      - 8080:8080
+      - 8081:8081
     volumes:
       - ./app-command:/app-command
     networks:
@@ -18,9 +18,10 @@ services:
       dockerfile: ./docker/images/app-query/dev.Dockerfile
     container_name: services-query-article
     ports:
-      - 8081:8081
+      - 8080:8080
     healthcheck:
       test: ["CMD", "bash", "-c", "curl localhost:8080/query/health-check"]
+      test: ["CMD", "bash", "-c", "curl localhost:8080/query/listen/message"]
     volumes:
       - ./app-query:/app-query
     networks:
