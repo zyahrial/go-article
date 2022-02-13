@@ -6,13 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"time"
 
-	models "services/article/models"
-	"services/article/db/database"
+	models "command/article/models"
+	"command/article/db/database"
+	rmq "command/article/message_broker"
+
 	"strconv"
 	"github.com/go-redis/redis"
-
-	rmq "services/article/message_broker"
-
 	"fmt"
 )
 
@@ -48,8 +47,7 @@ func Add(c *gin.Context) {
 
 	res, err := json.Marshal(addArticle)
 
-	var m models.ShowArticle
-	
+	var m models.ShowArticle	
 	if err := json.Unmarshal(res, &m); err != nil {
 		panic(err)
 	}
@@ -60,6 +58,8 @@ func Add(c *gin.Context) {
 	err = client.Set(s, res, 0).Err()
     if err != nil {
         fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
     }
 
 	queue := "QueueAddArticle"

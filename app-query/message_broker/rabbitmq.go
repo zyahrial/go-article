@@ -6,10 +6,16 @@ import (
     "fmt"
     // "github.com/gofiber/fiber/v2"
     // "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/kamva/mgm/v3"
+	"encoding/json"
+	"github.com/gin-gonic/gin"
+	"net/http"
+
     "github.com/streadway/amqp"
+	models "query/article/models"
 )
 
-func Consume(){
+func Consume(c *gin.Context){
 
 	amqpServerURL := "amqp://rmq:rmq@rabbitmq:5672/"
 
@@ -17,15 +23,13 @@ func Consume(){
     if err != nil {
         panic(err)
     }
-    defer connectRabbitMQ.Close()
 
     channelRabbitMQ, err := connectRabbitMQ.Channel()
     if err != nil {
         panic(err)
     }
-    defer channelRabbitMQ.Close()
 
-	msgChan, err := channelRabbitMQ.Consume(
+	messages, err := channelRabbitMQ.Consume(
 		"QueueAddArticle", // queue
 		"",       // consumer
 		true,     // auto-ack
@@ -34,10 +38,42 @@ func Consume(){
 		false,    // no-wait
 		nil,      // args
 	)
+
 	if err != nil {
-		return nil, fmt.Errorf("CONSUMING '%s' CHANNEL: %s", chanName, err.Error())
+		fmt.Println(err)
 	}
 
-	fmt.Println(string(msgChan))
-	return msgChan, nil
+    fmt.Println("Successfully connected to RabbitMQ")
+    fmt.Println("Waiting for messages")
+
+    forever := make(chan bool)
+
+    go func() {
+        for message := range messages {
+            // fmt.Printf(" > Received message: %s\n", message.Body)
+			res := message.Body
+			var m models.ShowArticle
+
+			if err := json.Unmarshal(res, &m); err != nil {
+				fmt.Println(err)
+			}
+		
+			id := m.Id
+			author := m.Author
+			tittle := m.Tittle
+			body := m.Body
+
+			save := models.NewArticle(id, author, tittle, body)
+			succ := mgm.Coll(save).Create(save)
+            fmt.Println("success add data to query DB:", succ)
+			defer channelRabbitMQ.Close()
+		}
+    }()
+    <-forever
+
+	defer connectRabbitMQ.Close()
+    defer channelRabbitMQ.Close()
+	c.JSON(http.StatusOK, gin.H{
+		"status": "message success consumed",
+	})
 }

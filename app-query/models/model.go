@@ -17,7 +17,7 @@ func init() {
 		Password: "article",
 	}
 	
-	err := mgm.SetDefaultConfig(nil,"admin", options.Client().ApplyURI("mongodb://" + "mongodb:27017" + "/" + "admin" + "?authSource=admin").SetAuth(credential))
+	err := mgm.SetDefaultConfig(nil,"admin", options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/" + "admin" + "?authSource=admin").SetAuth(credential))
 
 	if err != nil {
 		fmt.Printf("failed connection")
@@ -57,4 +57,17 @@ type Article struct {
 	Body      string      `json:"body" bson:"body" binding:"required"`
 	Created_at time.Time
 	Updated_at time.Time
+}
+
+func NewArticle(id int64, author string, tittle string, body string) *Article{
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	now := time.Now().In(loc)
+
+	return &Article{
+	   Id:  id,
+	   Author: author,
+	   Tittle: tittle,
+	   Body: body,
+	   Created_at: now,
+	}
 }

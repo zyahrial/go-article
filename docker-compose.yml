@@ -24,19 +24,19 @@ services:
     networks:
       - service-article
 
-  mongodb:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: article
-      MONGO_INITDB_ROOT_PASSWORD: article
-    ports:
-      - 27017:27017
-    volumes:
-      - mongo-data:/data/db
-    # depends_on:
-    #   - app
-    networks:
-      - service-article
+  # mongodb:
+  #   image: mongo:latest
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: article
+  #     MONGO_INITDB_ROOT_PASSWORD: article
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - mongo-data:/data/db
+  #   # depends_on:
+  #   #   - app
+  #   networks:
+  #     - service-article
 
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'

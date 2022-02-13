@@ -1,8 +1,8 @@
 package migrations
 
 import (
-	"services/article/db/database"
-	"services/article/models"
+	"command/article/db/database"
+	"command/article/models"
 	"log"
 )
 

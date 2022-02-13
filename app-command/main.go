@@ -2,11 +2,11 @@ package main
 
 import (
     "github.com/gin-gonic/gin"
-    controller "services/article/controller"
-    "services/article/db/database"
-    _ "github.com/jinzhu/gorm/dialects/postgres"
+    controller "command/article/controller"
+    "command/article/db/database"
+    "command/article/db/migrations"
 
-    "services/article/db/migrations"
+    _ "github.com/jinzhu/gorm/dialects/postgres"
     "time"
     "testing"
     "net/http"
@@ -34,7 +34,7 @@ func engine() *gin.Engine {
 
     gin.SetMode(gin.ReleaseMode)
     	
-	api := gin.New()
+	  api := gin.New()
     api.POST("command/article", controller.Add)
 
     api.GET("/health-check", func(c *gin.Context) {

@@ -12,7 +12,7 @@ import (
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	models "services/article/models"
+	models "query/article/models"
 )
 
 func Get(c *gin.Context) {

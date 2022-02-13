@@ -1,36 +1,25 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
-    controller "services/article/controller"
+    // "github.com/gin-gonic/gin"
+    // controller "query/article/controller"
+    routes "query/article/routes"
+    // "os/exec"
 
     "testing"
     "net/http"
     "net/http/httptest"
     "io/ioutil"
-	"fmt"
-)
+	  // "fmt"
+    // "context"
+    // message "query/article/message_broker"
+    // "github.com/jasonlvhit/gocron"
+  )
 
 func main() {
-	r := engine()
-	r.Use(gin.Logger())
-	if err := engine().Run(":8080"); err != nil {
-		fmt.Println("Unable to start:", err)
-	}
-}
+    routes.Route()
+    http.ListenAndServe("localhost:8080/query/listen/message", nil)
 
-func engine() *gin.Engine {
-	
-	api := gin.New()
-    api.GET("query/article", controller.Get)
-
-    api.GET("query/health-check", func(c *gin.Context) {
-      c.JSON(http.StatusOK, gin.H{
-        "data": "OK",
-      })
-    })
-
-	return api
 }
   
   func article(w http.ResponseWriter, r *http.Request) {
@@ -43,9 +32,7 @@ func engine() *gin.Engine {
     res := httptest.NewRecorder()
    
     article(res, req)
-   
-    // Instead of lines below, you can just use res.Code and res.Body.String() directly.
-   
+      
     result := res.Result()
    
     body, err := ioutil.ReadAll(result.Body)
